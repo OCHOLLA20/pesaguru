@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { sendChatMessage, getChatHistory, getSuggestions } from '../api/chatbot';
+import { sendChatMessage, getChatHistory, getChatbotSuggestions } from '../api/chatbot';
 import { useAuth } from './AuthContext';
 
 /**
@@ -8,7 +8,7 @@ import { useAuth } from './AuthContext';
 const ChatbotContext = createContext(null);
 
 export const ChatbotProvider = ({ children }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(null);
@@ -53,7 +53,7 @@ export const ChatbotProvider = ({ children }) => {
     const loadSuggestions = async () => {
       if (isAuthenticated) {
         try {
-          const suggestionData = await getSuggestions();
+          const suggestionData = await getChatbotSuggestions();
           setSuggestions(suggestionData);
         } catch (err) {
           console.error('Failed to load suggestions:', err);

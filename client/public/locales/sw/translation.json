@@ -1,0 +1,103 @@
+{
+  "app": {
+    "name": "PesaGuru",
+    "tagline": "Mshauri Wako wa Kifedha"
+  },
+  "auth": {
+    "login": "Ingia",
+    "register": "Jisajili",
+    "logout": "Toka",
+    "email": "Barua pepe",
+    "password": "Nywila",
+    "confirmPassword": "Thibitisha Nywila",
+    "forgotPassword": "Umesahau Nywila?",
+    "resetPassword": "Weka Nywila Upya",
+    "fullName": "Jina Kamili",
+    "phoneNumber": "Namba ya Simu",
+    "alreadyHaveAccount": "Una akaunti tayari?",
+    "dontHaveAccount": "Huna akaunti?",
+    "createAccount": "Fungua Akaunti"
+  },
+  "navigation": {
+    "dashboard": "Dashibodi",
+    "investments": "Uwekezaji",
+    "loans": "Mikopo",
+    "education": "Elimu",
+    "chatbot": "Msaidizi wa Kifedha",
+    "profile": "Wasifu",
+    "settings": "Mipangilio"
+  },
+  "dashboard": {
+    "welcome": "Karibu",
+    "financialSummary": "Muhtasari wa Kifedha",
+    "recentActivity": "Shughuli za Hivi Karibuni",
+    "quickActions": "Vitendo vya Haraka",
+    "investmentSummary": "Muhtasari wa Uwekezaji",
+    "loanSummary": "Muhtasari wa Mikopo"
+  },
+  "investments": {
+    "myInvestments": "Uwekezaji Wangu",
+    "recommendations": "Mapendekezo",
+    "addInvestment": "Ongeza Uwekezaji",
+    "investmentPlanning": "Mpango wa Uwekezaji",
+    "portfolioAnalysis": "Uchambuzi wa Portfolia",
+    "riskProfile": "Wasifu wa Hatari"
+  },
+  "loans": {
+    "myLoans": "Mikopo Yangu",
+    "loanComparison": "Ulinganisho wa Mikopo",
+    "addLoan": "Ongeza Mkopo",
+    "loanCalculator": "Kikokotoo cha Mkopo",
+    "affordabilityCheck": "Ukaguzi wa Uwezo wa Kulipa"
+  },
+  "education": {
+    "financialEducation": "Elimu ya Kifedha",
+    "articles": "Makala",
+    "videos": "Video",
+    "glossary": "Kamusi ya Kifedha",
+    "marketInsights": "Ufahamu wa Soko"
+  },
+  "chatbot": {
+    "askQuestion": "Uliza swali...",
+    "suggestions": "Mapendekezo",
+    "history": "Historia ya Mazungumzo",
+    "clearChat": "Futa Mazungumzo"
+  },
+  "profile": {
+    "personalInfo": "Taarifa Binafsi",
+    "preferences": "Mapendeleo",
+    "language": "Lugha",
+    "theme": "Mandhari",
+    "security": "Usalama",
+    "notifications": "Arifa"
+  },
+  "common": {
+    "loading": "Inapakia...",
+    "save": "Hifadhi",
+    "cancel": "Ghairi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "view": "Tazama",
+    "add": "Ongeza",
+    "remove": "Ondoa",
+    "search": "Tafuta",
+    "filter": "Chuja",
+    "sort": "Panga",
+    "back": "Rudi",
+    "next": "Endelea",
+    "submit": "Wasilisha",
+    "confirm": "Thibitisha",
+    "success": "Mafanikio",
+    "error": "Hitilafu",
+    "warning": "Onyo",
+    "info": "Taarifa"
+  },
+  "errors": {
+    "required": "Sehemu hii inahitajika",
+    "invalidEmail": "Tafadhali ingiza barua pepe halali",
+    "passwordMismatch": "Nywila hazifanani",
+    "passwordLength": "Nywila lazima iwe na angalau herufi 8",
+    "serverError": "Hitilafu ya seva, tafadhali jaribu tena baadaye",
+    "networkError": "Hitilafu ya mtandao, tafadhali angalia muunganisho wako"
+  }
+}

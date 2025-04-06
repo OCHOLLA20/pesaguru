@@ -1,0 +1,103 @@
+{
+  "app": {
+    "name": "PesaGuru",
+    "tagline": "Your Financial Advisory Companion"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "fullName": "Full Name",
+    "phoneNumber": "Phone Number",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "createAccount": "Create Account"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "investments": "Investments",
+    "loans": "Loans",
+    "education": "Education",
+    "chatbot": "Financial Assistant",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "financialSummary": "Financial Summary",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions",
+    "investmentSummary": "Investment Summary",
+    "loanSummary": "Loan Summary"
+  },
+  "investments": {
+    "myInvestments": "My Investments",
+    "recommendations": "Recommendations",
+    "addInvestment": "Add Investment",
+    "investmentPlanning": "Investment Planning",
+    "portfolioAnalysis": "Portfolio Analysis",
+    "riskProfile": "Risk Profile"
+  },
+  "loans": {
+    "myLoans": "My Loans",
+    "loanComparison": "Loan Comparison",
+    "addLoan": "Add Loan",
+    "loanCalculator": "Loan Calculator",
+    "affordabilityCheck": "Affordability Check"
+  },
+  "education": {
+    "financialEducation": "Financial Education",
+    "articles": "Articles",
+    "videos": "Videos",
+    "glossary": "Financial Glossary",
+    "marketInsights": "Market Insights"
+  },
+  "chatbot": {
+    "askQuestion": "Ask a question...",
+    "suggestions": "Suggestions",
+    "history": "Chat History",
+    "clearChat": "Clear Chat"
+  },
+  "profile": {
+    "personalInfo": "Personal Information",
+    "preferences": "Preferences",
+    "language": "Language",
+    "theme": "Theme",
+    "security": "Security",
+    "notifications": "Notifications"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "add": "Add",
+    "remove": "Remove",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Information"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email",
+    "passwordMismatch": "Passwords do not match",
+    "passwordLength": "Password must be at least 8 characters",
+    "serverError": "Server error, please try again later",
+    "networkError": "Network error, please check your connection"
+  }
+}

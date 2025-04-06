@@ -1,89 +1,82 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
 import './App.css';
 
-// Page components
-import Dashboard from './pages/Dashboard';
-import ChatbotPage from './pages/Chatbot';
-import InvestmentPlanning from './pages/InvestmentPlanning';
-import LoanComparison from './pages/LoanComparison';
-import FinancialEducation from './pages/Education';
-import UserProfile from './pages/Profile';
+// Layout components
+import Layout from './components/layout/Layout';
+import LoadingScreen from './components/common/LoadingScreen.jsx';
+
+// Auth pages
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import ResetPassword from './pages/Auth/ResetPassword';
 
-// Layout component
-import Layout from './components/layout/Layout';
+// Main application pages
+import Dashboard from './pages/Dashboard';
+import ChatbotPage from './pages/Chatbot';
+import InvestmentPlanning from './pages/Investment';
+import LoanComparison from './pages/Loan';
+import FinancialEducation from './pages/Education';
+import UserProfile from './pages/Profile';
 
-// Context providers
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { ChatbotProvider } from './context/ChatbotContext';
-import { ThemeProvider } from './context/ThemeContext';
+// Styles
+import './App.css';
+import './i18n'; // Initialize i18n
 
-// Import i18n for multilingual support
-import './i18n';
-
-// Protected route wrapper component
+// Protected route wrapper
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
-    return (
-      <div className="loading-screen">
-        <div className="loader"></div>
-        <p>Loading PesaGuru...</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
   
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-  
-  return children;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
+
+function AppContent() {
+  const { checkAuthStatus } = useAuth();
+  
+  useEffect(() => {
+    // Check authentication status when app loads
+    checkAuthStatus();
+  }, [checkAuthStatus]);
+
+  return (
+    <Routes>
+      {/* Public routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      
+      {/* Protected routes */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Layout />
+        </ProtectedRoute>
+      }>
+        <Route index element={<Dashboard />} />
+        <Route path="chatbot" element={<ChatbotPage />} />
+        <Route path="investments" element={<InvestmentPlanning />} />
+        <Route path="loans" element={<LoanComparison />} />
+        <Route path="education" element={<FinancialEducation />} />
+        <Route path="profile" element={<UserProfile />} />
+      </Route>
+      
+      {/* Catch-all redirect to dashboard */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
 
 function App() {
   return (
-    <Router>
-      <ThemeProvider>
-        <AuthProvider>
-          <ChatbotProvider>
-            <div className="app-container">
-              <Routes>
-                {/* Public routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                
-                {/* Protected routes with Layout */}
-                <Route 
-                  path="/" 
-                  element={
-                    <ProtectedRoute>
-                      <Layout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<Dashboard />} />
-                  <Route path="chatbot" element={<ChatbotPage />} />
-                  <Route path="investments" element={<InvestmentPlanning />} />
-                  <Route path="loans" element={<LoanComparison />} />
-                  <Route path="education" element={<FinancialEducation />} />
-                  <Route path="profile" element={<UserProfile />} />
-                </Route>
-                
-                {/* Fallback route - redirect to dashboard */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </div>
-          </ChatbotProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </Router>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <AppContent />
+    </div>
   );
 }
 

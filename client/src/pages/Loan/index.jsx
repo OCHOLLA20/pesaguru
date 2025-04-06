@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLoans } from '../../hooks/useLoans'; // Assuming this hook exists or will be created
+import useLoans from '../../hooks/useLoans'; // Using default import
 
 // Placeholder components - these would be imported from your components folder
 import LoanCard from '../../components/Loan/LoanCard';

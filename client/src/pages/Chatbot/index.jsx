@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useChatbot } from '../../context/ChatbotContext';
-import { useAuth } from '../../context/AuthContext';
 import ChatMessage from '../../components/Chatbot/ChatMessage';
 import ChatInput from '../../components/Chatbot/ChatInput';
 import TypingIndicator from '../../components/Chatbot/TypingIndicator';
@@ -10,7 +9,6 @@ import Suggestions from '../../components/Chatbot/Suggestions';
 
 const ChatbotPage = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const { 
     messages, 
     sendMessage, 

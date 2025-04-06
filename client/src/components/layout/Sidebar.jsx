@@ -7,7 +7,6 @@ import {
   DollarSign, 
   Book, 
   Settings, 
-  Users, 
   HelpCircle, 
   AlertTriangle,
   Target 

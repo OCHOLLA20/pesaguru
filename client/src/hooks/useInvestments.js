@@ -103,7 +103,7 @@ const useInvestments = (defaultParams = {}) => {
   const calculatePotentialReturns = useCallback((amount, recommendation) => {
     if (!recommendation || !amount) return null;
     
-    const { historicalReturn, riskLevel } = recommendation;
+    const { historicalReturn } = recommendation;
     
     // Simple calculation based on historical returns
     // In real app, would use more sophisticated models

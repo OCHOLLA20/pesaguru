@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useInvestments } from '../../hooks/useInvestments';
-import { useUserProfile } from '../../hooks/useUserProfile';
+import useInvestments from '../../hooks/useInvestments';
+import useUserProfile from '../../hooks/useUserProfile';
 import PortfolioAllocation from '../../components/Investment/PortfolioAllocation';
 import StockRecommendation from '../../components/Investment/StockRecommendation';
 import InvestmentForm from '../../components/forms/InvestmentForm';

@@ -1,0 +1,47 @@
+{
+  "current": {
+    "rate": 7.67139634029402,
+    "date": "January 2023",
+    "formatted": "7.7%"
+  },
+  "yearly_averages": {
+    "2016": 6.29724953814625,
+    "2017": 8.00564967709945,
+    "2018": 4.6898064677633,
+    "2019": 5.23963795764792,
+    "2020": 5.40516207933392,
+    "2021": 6.10793603659176,
+    "2022": 7.65986268272224,
+    "2023": 7.67139634029402
+  },
+  "quarterly_averages": {
+    "2022": {
+      "Q1": 7.65986268272224
+    },
+    "2023": {
+      "Q1": 7.67139634029402
+    }
+  },
+  "trend": {
+    "current_direction": "increasing",
+    "six_month_change": 2.98158987253072,
+    "one_year_change": 0
+  },
+  "metadata": {
+    "last_updated": "2025-03-16 16:51:33",
+    "data_sources": [
+      "World Bank"
+    ],
+    "coverage_start": "2016-01-01",
+    "coverage_end": "2023-01-01",
+    "data_points": 8
+  },
+  "prebuilt_responses": {
+    "current_rate": "Kenya's current inflation rate is 7.7% as of January 2023.",
+    "trend": "The inflation rate in Kenya is currently increasing. Over the past six months, it has changed by +3.0% and over the past year by +0.0%.",
+    "year_to_date": "The average inflation rate in Kenya for 2025 so far is 0.0%.",
+    "historical_comparison": "Compared to historical averages, the current inflation rate of 7.7% is moderately higher than the ten-year average of 6.4%."
+  },
+  "raw_data": [
+    {
+      "date": 

@@ -118,6 +118,36 @@ export const resetPassword = async (resetData) => {
 };
 
 /**
+ * Send password reset email
+ * @param {string} email - User email
+ * @returns {Promise<Object>} Reset email response
+ */
+export const sendPasswordResetEmail = async (email) => {
+  try {
+    const response = await apiClient.post('/auth/forgot-password', { email });
+    return response;
+  } catch (error) {
+    console.error('Send password reset email error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Validate reset token
+ * @param {string} token - Reset token
+ * @returns {Promise<Object>} Token validation response
+ */
+export const validateResetToken = async (token) => {
+  try {
+    const response = await apiClient.post('/auth/validate-token', { token });
+    return response;
+  } catch (error) {
+    console.error('Token validation error:', error);
+    throw error;
+  }
+};
+
+/**
  * Update user's preferred language
  * @param {string} language - Language code (en/sw)
  * @returns {Promise<Object>} Update response

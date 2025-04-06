@@ -67,6 +67,55 @@ export const getChatbotSuggestions = async (query = '') => {
 };
 
 /**
+ * Get client-side suggestions for common financial queries
+ * Can be used as a fallback when API is unavailable or for quick responses
+ * @param {string} [category='general'] - Category of suggestions to return
+ * @param {string} [userContext=null] - Optional user context to personalize suggestions
+ * @returns {Array<string>} Array of suggested queries
+ */
+export const getSuggestions = (category = 'general', userContext = null) => {
+  const suggestions = {
+    general: [
+      "What's my current financial status?",
+      "How can I start investing?",
+      "What are the best savings options in Kenya?",
+      "How do I create a budget?",
+      "Explain investment risk levels"
+    ],
+    investment: [
+      "What stocks should I invest in?",
+      "How do I buy shares on NSE?",
+      "Show me top performing stocks",
+      "Compare treasury bills vs. bonds",
+      "What are the best performing sectors?"
+    ],
+    loans: [
+      "Compare personal loan options",
+      "What's the best mortgage rate?",
+      "How much can I afford to borrow?",
+      "What documents do I need for a loan?",
+      "How to improve my credit score"
+    ],
+    planning: [
+      "Help me plan for retirement",
+      "How to save for my child's education",
+      "Create a savings goal",
+      "How to buy a home in Kenya",
+      "Best way to track my expenses"
+    ]
+  };
+  
+  // Select context-specific suggestions if context is provided
+  if (userContext && userContext.recentTopic) {
+    // Return category-specific suggestions based on user's recent interactions
+    return suggestions[userContext.recentTopic] || suggestions.general;
+  }
+  
+  // Return suggestions for the requested category or default to general
+  return suggestions[category] || suggestions.general;
+};
+
+/**
  * Start a new conversation
  * @param {Object} [initData] - Optional initialization data for the conversation
  * @param {string} [initData.topic] - Topic of the conversation

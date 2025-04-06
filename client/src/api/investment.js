@@ -99,7 +99,8 @@ export const getWatchlist = () => {
   return apiClient.get('/investments/watchlist');
 };
 
-export default {
+// Create a named object before exporting
+const investmentApi = {
   getInvestmentRecommendations,
   getPortfolioAllocation,
   getStockDetails,
@@ -111,3 +112,5 @@ export default {
   removeFromWatchlist,
   getWatchlist
 };
+
+export default investmentApi;

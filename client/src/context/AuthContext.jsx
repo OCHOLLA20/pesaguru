@@ -13,28 +13,32 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  /**
+   * Check the authentication status of the current user
+   */
+  const checkAuthStatus = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+      
+      const userData = await getCurrentUser();
+      setUser(userData);
+      setIsAuthenticated(true);
+    } catch (err) {
+      console.error('Auth check failed:', err);
+      localStorage.removeItem('token');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Check authentication status on mount
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-          setIsLoading(false);
-          return;
-        }
-        
-        const userData = await getCurrentUser();
-        setUser(userData);
-        setIsAuthenticated(true);
-      } catch (err) {
-        console.error('Auth check failed:', err);
-        localStorage.removeItem('token');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     checkAuthStatus();
   }, []);
 
@@ -110,7 +114,8 @@ export const AuthProvider = ({ children }) => {
       login,
       register,
       logout,
-      updateUserData
+      updateUserData,
+      checkAuthStatus
     }}>
       {children}
     </AuthContext.Provider>

@@ -1,32 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { useUserProfile } from '../../hooks/useUserProfile';
-import { useAuth } from '../../context/AuthContext';
-import ProfileSkeleton from '../../components/common/ProfileSkeleton';
-import ErrorAlert from '../../components/common/ErrorAlert';
 import { useTranslation } from 'react-i18next';
+import useUserProfile from '../../hooks/useUserProfile';
+import { validateEmail, validatePhone } from '../../utils/validators';
+
+// UI Components
+const TabButton = ({ active, onClick, children }) => (
+  <button
+    onClick={onClick}
+    className={`px-4 py-2 font-medium rounded-t-lg ${
+      active 
+        ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border-b-2 border-blue-600' 
+        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+    }`}
+  >
+    {children}
+  </button>
+);
 
 const ProfilePage = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const { userProfile, isLoading, error, updateProfile } = useUserProfile();
-  const [isEditing, setIsEditing] = useState(false);
+  
+  const [activeTab, setActiveTab] = useState('personal');
   const [formData, setFormData] = useState({
     full_name: '',
+    email: '',
     phone_number: '',
     preferred_language: 'en',
-    monthly_income: 0,
-    monthly_expenses: 0,
+    monthly_income: '',
+    monthly_expenses: '',
     risk_profile: 'moderate'
   });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
+  // Load profile data when available
   useEffect(() => {
     if (userProfile) {
       setFormData({
         full_name: userProfile.full_name || '',
+        email: userProfile.email || '',
         phone_number: userProfile.phone_number || '',
         preferred_language: userProfile.preferred_language || 'en',
-        monthly_income: userProfile.monthly_income || 0,
-        monthly_expenses: userProfile.monthly_expenses || 0,
+        monthly_income: userProfile.monthly_income || '',
+        monthly_expenses: userProfile.monthly_expenses || '',
         risk_profile: userProfile.risk_profile || 'moderate'
       });
     }
@@ -34,237 +52,285 @@ const ProfilePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'monthly_income' || name === 'monthly_expenses' 
-        ? parseFloat(value) || 0 
-        : value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when field is changed
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    
+    // Clear success message when form is modified
+    if (successMessage) {
+      setSuccessMessage('');
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = t('profile.errors.nameRequired');
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = t('profile.errors.emailRequired');
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = t('profile.errors.invalidEmail');
+    }
+    
+    if (formData.phone_number && !validatePhone(formData.phone_number)) {
+      newErrors.phone_number = t('profile.errors.invalidPhone');
+    }
+    
+    if (formData.monthly_income && isNaN(formData.monthly_income)) {
+      newErrors.monthly_income = t('profile.errors.invalidIncome');
+    }
+    
+    if (formData.monthly_expenses && isNaN(formData.monthly_expenses)) {
+      newErrors.monthly_expenses = t('profile.errors.invalidExpenses');
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
     try {
-      await updateProfile(formData);
-      setIsEditing(false);
+      // Process numerical values
+      const processedData = {
+        ...formData,
+        monthly_income: formData.monthly_income ? parseFloat(formData.monthly_income) : undefined,
+        monthly_expenses: formData.monthly_expenses ? parseFloat(formData.monthly_expenses) : undefined
+      };
+      
+      await updateProfile(processedData);
+      setSuccessMessage(t('profile.updateSuccess'));
     } catch (err) {
-      console.error('Failed to update profile:', err);
+      setErrors({ submit: err.message || t('profile.updateError') });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (isLoading) return <ProfileSkeleton />;
-  if (error) return <ErrorAlert message={error} />;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        {/* Profile Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 sm:p-10">
-          <div className="flex items-center space-x-5">
-            <div className="h-20 w-20 rounded-full bg-indigo-100 flex items-center justify-center text-2xl font-bold text-indigo-800">
-              {user?.full_name?.charAt(0) || userProfile?.full_name?.charAt(0) || 'U'}
-            </div>
-            <div className="text-white">
-              <h1 className="text-2xl font-bold">{userProfile?.full_name}</h1>
-              <p className="text-indigo-100">{user?.email}</p>
-            </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">{t('profile.title')}</h1>
+      
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+      
+      {successMessage && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+          {successMessage}
+        </div>
+      )}
+      
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="border-b border-gray-200 dark:border-gray-700">
+          <div className="flex">
+            <TabButton 
+              active={activeTab === 'personal'} 
+              onClick={() => setActiveTab('personal')}
+            >
+              {t('profile.tabs.personal')}
+            </TabButton>
+            <TabButton 
+              active={activeTab === 'financial'} 
+              onClick={() => setActiveTab('financial')}
+            >
+              {t('profile.tabs.financial')}
+            </TabButton>
+            <TabButton 
+              active={activeTab === 'preferences'} 
+              onClick={() => setActiveTab('preferences')}
+            >
+              {t('profile.tabs.preferences')}
+            </TabButton>
           </div>
         </div>
-
-        {/* Profile Content */}
-        <div className="px-6 py-5 sm:p-6">
-          {isEditing ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">
+        
+        <div className="p-6">
+          <form onSubmit={handleSubmit}>
+            {activeTab === 'personal' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {t('profile.fullName')}
                   </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      name="full_name"
-                      id="full_name"
-                      value={formData.full_name}
-                      onChange={handleChange}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.full_name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    } dark:bg-gray-700`}
+                  />
+                  {errors.full_name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>
+                  )}
                 </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('profile.email')}
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    } dark:bg-gray-700`}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {t('profile.phoneNumber')}
                   </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      name="phone_number"
-                      id="phone_number"
-                      value={formData.phone_number}
-                      onChange={handleChange}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
+                  <input
+                    type="tel"
+                    name="phone_number"
+                    value={formData.phone_number}
+                    onChange={handleChange}
+                    placeholder="+254XXXXXXXXX"
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.phone_number ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    } dark:bg-gray-700`}
+                  />
+                  {errors.phone_number && (
+                    <p className="mt-1 text-sm text-red-600">{errors.phone_number}</p>
+                  )}
                 </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="preferred_language" className="block text-sm font-medium text-gray-700">
-                    {t('profile.preferredLanguage')}
-                  </label>
-                  <div className="mt-1">
-                    <select
-                      id="preferred_language"
-                      name="preferred_language"
-                      value={formData.preferred_language}
-                      onChange={handleChange}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    >
-                      <option value="en">English</option>
-                      <option value="sw">Kiswahili</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="risk_profile" className="block text-sm font-medium text-gray-700">
-                    {t('profile.riskProfile')}
-                  </label>
-                  <div className="mt-1">
-                    <select
-                      id="risk_profile"
-                      name="risk_profile"
-                      value={formData.risk_profile}
-                      onChange={handleChange}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    >
-                      <option value="conservative">{t('investments.risk.conservative')}</option>
-                      <option value="moderate">{t('investments.risk.moderate')}</option>
-                      <option value="aggressive">{t('investments.risk.aggressive')}</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="monthly_income" className="block text-sm font-medium text-gray-700">
+              </div>
+            )}
+            
+            {activeTab === 'financial' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {t('profile.monthlyIncome')} (KES)
                   </label>
-                  <div className="mt-1">
-                    <input
-                      type="number"
-                      name="monthly_income"
-                      id="monthly_income"
-                      value={formData.monthly_income}
-                      onChange={handleChange}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
+                  <input
+                    type="number"
+                    name="monthly_income"
+                    value={formData.monthly_income}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.monthly_income ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    } dark:bg-gray-700`}
+                  />
+                  {errors.monthly_income && (
+                    <p className="mt-1 text-sm text-red-600">{errors.monthly_income}</p>
+                  )}
                 </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="monthly_expenses" className="block text-sm font-medium text-gray-700">
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {t('profile.monthlyExpenses')} (KES)
                   </label>
-                  <div className="mt-1">
-                    <input
-                      type="number"
-                      name="monthly_expenses"
-                      id="monthly_expenses"
-                      value={formData.monthly_expenses}
-                      onChange={handleChange}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
+                  <input
+                    type="number"
+                    name="monthly_expenses"
+                    value={formData.monthly_expenses}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.monthly_expenses ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    } dark:bg-gray-700`}
+                  />
+                  {errors.monthly_expenses && (
+                    <p className="mt-1 text-sm text-red-600">{errors.monthly_expenses}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('profile.riskProfile')}
+                  </label>
+                  <select
+                    name="risk_profile"
+                    value={formData.risk_profile}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700"
+                  >
+                    <option value="conservative">{t('profile.riskLevels.conservative')}</option>
+                    <option value="moderate">{t('profile.riskLevels.moderate')}</option>
+                    <option value="aggressive">{t('profile.riskLevels.aggressive')}</option>
+                  </select>
                 </div>
               </div>
+            )}
+            
+            {activeTab === 'preferences' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('profile.language')}
+                  </label>
+                  <select
+                    name="preferred_language"
+                    value={formData.preferred_language}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700"
+                  >
+                    <option value="en">{t('profile.languages.english')}</option>
+                    <option value="sw">{t('profile.languages.swahili')}</option>
+                  </select>
+                </div>
 
-              <div className="pt-5 flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  className="bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  {t('common.save')}
-                </button>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t('profile.security')}
+                  </h3>
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    onClick={() => alert('Password change functionality would be implemented here')}
+                  >
+                    {t('profile.changePassword')}
+                  </button>
+                </div>
               </div>
-            </form>
-          ) : (
-            <>
-              <div className="border-b border-gray-200 pb-5">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">{t('profile.personalInfo')}</h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">{t('profile.detailsSubtitle')}</p>
-              </div>
-              
-              <dl className="divide-y divide-gray-200">
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">{t('profile.fullName')}</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{userProfile?.full_name}</dd>
-                </div>
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">{t('profile.email')}</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user?.email}</dd>
-                </div>
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">{t('profile.phoneNumber')}</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{userProfile?.phone_number || '—'}</dd>
-                </div>
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">{t('profile.preferredLanguage')}</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {userProfile?.preferred_language === 'sw' ? 'Kiswahili' : 'English'}
-                  </dd>
-                </div>
-              </dl>
-
-              <div className="border-t border-b border-gray-200 mt-6 pt-6 pb-5">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">{t('profile.financialInfo')}</h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">{t('profile.financialSubtitle')}</p>
-              </div>
-
-              <dl className="divide-y divide-gray-200">
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">{t('profile.monthlyIncome')}</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {userProfile?.monthly_income 
-                      ? `KES ${userProfile.monthly_income.toLocaleString()}`
-                      : '—'}
-                  </dd>
-                </div>
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">{t('profile.monthlyExpenses')}</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {userProfile?.monthly_expenses 
-                      ? `KES ${userProfile.monthly_expenses.toLocaleString()}`
-                      : '—'}
-                  </dd>
-                </div>
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">{t('profile.riskProfile')}</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {userProfile?.risk_profile 
-                      ? t(`investments.risk.${userProfile.risk_profile}`)
-                      : '—'}
-                  </dd>
-                </div>
-              </dl>
-
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  {t('profile.editProfile')}
-                </button>
-              </div>
-            </>
-          )}
+            )}
+            
+            {errors.submit && (
+              <div className="mt-4 text-sm text-red-600">{errors.submit}</div>
+            )}
+            
+            <div className="mt-6">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              >
+                {isSubmitting ? t('profile.saving') : t('profile.saveChanges')}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

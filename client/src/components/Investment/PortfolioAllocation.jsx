@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, Sector } from 'recharts';
-import { useInvestments } from '../../hooks/useInvestments';
+import useInvestments from '../../hooks/useInvestments';
 
 const PortfolioAllocation = () => {
   const { portfolio, isLoading, error, fetchPortfolio } = useInvestments();

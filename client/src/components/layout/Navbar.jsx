@@ -88,7 +88,7 @@ const Navbar = ({ onMenuClick }) => {
                     </div>
                   </div>
                   <div className="px-4 py-2 border-t border-gray-200 text-center">
-                    <a href="#" className="text-sm text-blue-600 hover:text-blue-800">View all notifications</a>
+                    <button className="text-sm text-blue-600 hover:text-blue-800">View all notifications</button>
                   </div>
                 </div>
               )}
