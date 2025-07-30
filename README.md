@@ -503,7 +503,7 @@ This project is licensed under the **MIT License** – see the [LICENSE](LICENSE
 - 🐛 **Bug Reports**: Create an issue with the bug template
 - 💡 **Feature Requests**: Open an issue with the feature template
 - ❓ **Questions**: Start a discussion in GitHub Discussions
-- 📧 **Direct Contact**: ocholla.dev@gmail.com
+- 📧 **Direct Contact**: bukayaocholla@gmail.com
 
 ---
 
