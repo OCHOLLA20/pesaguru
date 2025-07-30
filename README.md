@@ -9,8 +9,6 @@
 
 **PesaGuru** is an intelligent, multilingual financial advisory chatbot specifically tailored for the Kenyan market. It provides personalized investment planning, loan comparison, market insights, budgeting assistance, and comprehensive financial education through natural conversation in both English and Swahili.
 
-![PesaGuru Screenshot](./client/public/logo512.png)
-
 > *Empowering financial decision-making with AI, local context, and clarity.* 🇰🇪
 
 ---
