@@ -495,7 +495,7 @@ This project is licensed under the **MIT License** – see the [LICENSE](LICENSE
 
 ### **Project Information**
 - 👨‍💻 **Developer**: [OCHOLLA20](https://github.com/OCHOLLA20)
-- 📧 **Email**: ocholla.dev@gmail.com
+- 📧 **Email**: bukayaocholla@gmail.com
 - 🌐 **Project**: [PesaGuru on GitHub](https://github.com/OCHOLLA20/pesaguru)
 - 📚 **Documentation**: Available in the `/docs` folder
 
